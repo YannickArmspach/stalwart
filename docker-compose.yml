@@ -1,0 +1,25 @@
+services:
+  stalwart:
+    image: stalwartlabs/stalwart:v0.16
+    restart: unless-stopped
+    ports:
+      - "25:25"        # SMTP (inbound MX)
+      - "465:465"      # SMTPS submission
+      - "587:587"      # submission STARTTLS
+      - "143:143"      # IMAP STARTTLS
+      - "993:993"      # IMAPS
+      - "4190:4190"    # ManageSieve
+      - "127.0.0.1:18080:8080"   # admin/JMAP — reached only via the Temps proxy
+    volumes:
+      - stalwart-etc:/etc/stalwart
+      - stalwart-data:/var/lib/stalwart
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8080/healthz/live"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+volumes:
+  stalwart-etc:
+  stalwart-data:
