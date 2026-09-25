@@ -76,21 +76,29 @@ bunx @temps-sdk/cli@0.1.36 --target-context console-ynk-one \
 
 Then verify: `bunx @temps-sdk/cli@0.1.36 --target-context console-ynk-one dns-provider test --id 2`
 
-## 7. Stalwart webadmin — first login and mail domain
+## 7. Stalwart webadmin — setup wizard, domain, mailbox
 
-1. Open `https://mail.ynk.one` → login `admin` + the bootstrap password from the agent.
-2. **Immediately change the admin password** (Settings → Administrators).
-3. Set the server hostname: `mail.ynk.one` (Settings → Server → Network, if not already set).
-4. TLS / ACME (Settings → Server → TLS → ACME): provider *Let's Encrypt*, challenge **DNS-01**,
-   DNS provider **Cloudflare**, paste your API token. Stalwart then issues/renews the mail
-   certificate itself.
-5. DNS management: choose **Automatic** with provider **Cloudflare** + the same token — Stalwart
+> Stalwart is currently in **bootstrap mode**: only the web UI is listening. The mail ports
+> (25/465/587/143/993) open automatically once you complete the initial setup below.
+> Until `mail.ynk.one` is attached, the UI is also reachable at
+> `https://stalwart-production.dev.ynk.one`.
+
+1. Open `https://mail.ynk.one` → login `admin` + the one-time bootstrap password from the agent.
+2. The **setup wizard** runs on first login: hostname → `mail.ynk.one`; set the **permanent
+   admin password** when asked (the bootstrap password dies here).
+3. TLS / ACME (wizard or Settings → Server → TLS → ACME): provider *Let's Encrypt*, challenge
+   **DNS-01**, DNS provider **Cloudflare**, paste your API token. Stalwart then issues/renews the
+   mail certificate itself.
+4. DNS management: choose **Automatic** with provider **Cloudflare** + the same token — Stalwart
    publishes MX, SPF, DKIM, DMARC, MTA-STS and autoconfig records for you.
-6. **Create the domain**: Management → Directory → Domains → add `ynk.one`.
+5. **Create the domain**: Management → Directory → Domains → add `ynk.one`.
    (If you skipped automatic DNS: the domain page lists every DNS record to copy into Cloudflare.)
-7. **Create your account**: Directory → Accounts → add — name `yannick`, email `yannick@ynk.one`,
+6. **Create your account**: Directory → Accounts → add — name `yannick`, email `yannick@ynk.one`,
    set a strong password. Add aliases `postmaster@ynk.one` and `abuse@ynk.one` pointing to it.
-8. Tell the agent — it runs the final verification pass.
+7. Tell the agent — it runs the final verification pass.
+
+> Note: every git push to this repo redeploys the container (mail data in the volumes is safe;
+> expect a few seconds of downtime).
 
 ## 8. Mail client
 
